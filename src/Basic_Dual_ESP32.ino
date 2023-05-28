@@ -15,12 +15,6 @@
 bool deBug = false;
 
 //Serial Ports
-// #define SerialGPS Serial1   //1st F9P 10hz GGA,VTG + 1074,1084,1094,1230,4072.0
-// #define RX1   27
-// #define TX1   16
-// #define SerialGPS2 Serial2  //2nd F9P 10hz relPos
-// #define RX2   25
-// #define TX2   17
 
 #define SerialAOG Serial    //AgOpen / USB
 HardwareSerial* SerialGPS = &Serial2;   //Main postion receiver (GGA) (Serial2 must be used here with T4.0 / Basic Panda boards - Should auto swap)
@@ -38,13 +32,12 @@ uint8_t GPS2txbuffer[serial_buffer_size];   //Extra serial tx buffer
 //is the GGA the second sentence?
 const bool isLastSentenceGGA = true;
 
-//I2C pins, SDA = 21, SCL = 22
+//I2C pins, SDA = 18, SCL = 19
 //Note - Pullup resistors will be needed on both SDA & SCL pins
 
 //Ethernet
-//SPI config: MOSI 23 / MISO 19 / CLK18 / CS5, GND, 3.3V
 byte Eth_CS_PIN = 5;  //CS PIN with SPI Ethernet hardware W 5500  
-byte Eth_myip[4] = { 192, 168, 1, 80 }; //IP address for this GPS module
+byte Eth_myip[4] = { 192, 168, 137, 80 }; //IP address for this GPS module
 byte mac[] = {0x90, 0xA2, 0xDA, 0x10, 0xB3, 0x1B}; // original
 byte Eth_ipDest_ending = 255;        //ending of IP address to send UDP data to
 unsigned int portMy = 5544;          //this is port of this module
@@ -138,11 +131,6 @@ void setup()
     SerialGPS->begin(baudGPS);
     SerialGPS->addMemoryForRead(GPSrxbuffer, serial_buffer_size);
     SerialGPS->addMemoryForWrite(GPStxbuffer, serial_buffer_size);
-
-    // SerialGPS.setRxBufferSize(512);
-    // SerialGPS.begin(baudGPS, SERIAL_8N1, RX1, TX1);
-    // SerialGPS.setRxBufferSize(300);
-    //GPS2 Started below
 
     //the dash means wildcard
     parser.setErrorHandler(errorHandler);
@@ -244,14 +232,12 @@ void setup()
       SerialGPS2->begin(baudGPS);
       SerialGPS2->addMemoryForRead(GPS2rxbuffer, serial_buffer_size);
       SerialGPS2->addMemoryForWrite(GPS2txbuffer, serial_buffer_size);
-      // SerialGPS2.begin(baudGPS, SERIAL_8N1, RX2, TX2);
-      // SerialGPS2.setRxBufferSize(150);
       //useDual = true;
     }
 
 //Ethernet
-  Ethernet.init(Eth_CS_PIN);
-  delay(15000);   //Delay just to give switch or router a head start when on same power supply
+  //Ethernet.init(Eth_CS_PIN);
+  //delay(15000);   //Delay just to give switch or router a head start when on same power supply
   Ethernet.begin(mac, Eth_myip);
   delay(3000);
   // Check for Ethernet hardware present
