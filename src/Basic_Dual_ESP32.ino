@@ -36,7 +36,7 @@ const bool isLastSentenceGGA = true;
 //Note - Pullup resistors will be needed on both SDA & SCL pins
 
 //Ethernet
-byte Eth_CS_PIN = 5;  //CS PIN with SPI Ethernet hardware W 5500  
+//byte Eth_CS_PIN = 5;  //CS PIN with SPI Ethernet hardware W 5500  
 byte Eth_myip[4] = { 192, 168, 137, 80 }; //IP address for this GPS module
 byte mac[] = {0x90, 0xA2, 0xDA, 0x10, 0xB3, 0x1B}; // original
 byte Eth_ipDest_ending = 255;        //ending of IP address to send UDP data to
@@ -125,8 +125,24 @@ void BuildPANDA();
 void GyroHandler( uint32_t delta );
 void relPosDecode();
 
+// Status LED's
+#define Power_on_LED 5            //Red
+#define Ethernet_Active_LED 6     //Green
+#define GPSRED_LED 9              //Red (Flashing = NO IMU or Dual, ON = GPS fix with IMU)
+#define GPSGREEN_LED 10           //Green (Flashing = Dual bad, ON = Dual good)
+#define AUTOSTEER_STANDBY_LED 11  //Red
+#define AUTOSTEER_ACTIVE_LED 12   //Green
+
 void setup()
-{
+{   
+    pinMode(Power_on_LED, OUTPUT);
+    pinMode(Ethernet_Active_LED, OUTPUT);
+    pinMode(GPSRED_LED, OUTPUT);
+    pinMode(GPSGREEN_LED, OUTPUT);
+    pinMode(AUTOSTEER_STANDBY_LED, OUTPUT);
+    pinMode(AUTOSTEER_ACTIVE_LED, OUTPUT);
+    digitalWrite(Power_on_LED, 1);
+
     SerialAOG.begin(baudAOG);
     SerialGPS->begin(baudGPS);
     SerialGPS->addMemoryForRead(GPSrxbuffer, serial_buffer_size);
@@ -202,6 +218,7 @@ void setup()
             {
               if (bno08x.checkReportEnable(SENSOR_REPORTID_GYRO_INTEGRATED_ROTATION_VECTOR, (GYRO_LOOP_TIME-1)) == false) bno08x.printGetFeatureResponse();
               if (bno08x.checkReportEnable(SENSOR_REPORTID_GAME_ROTATION_VECTOR, (GYRO_LOOP_TIME-1)) == false) bno08x.printGetFeatureResponse();
+              digitalWrite(GPSRED_LED, 1);
 
               // Break out of loop
               useBNO08x = true;
@@ -238,20 +255,29 @@ void setup()
 //Ethernet
   //Ethernet.init(Eth_CS_PIN);
   //delay(15000);   //Delay just to give switch or router a head start when on same power supply
+
+  Serial.println("Starting Ethernet");
   Ethernet.begin(mac, Eth_myip);
   delay(3000);
   // Check for Ethernet hardware present
   if (Ethernet.hardwareStatus() == EthernetNoHardware) {
     Serial.println("Ethernet shield was not found, sending data via USB only.");
     Ethernet_running = false;
+    return;
   }
   else {
     Serial.println("Ethernet hardware found, checking for connection");
     if (Ethernet.linkStatus() == LinkOFF) {
       Serial.println("Ethernet cable is not connected yet, sending data via USB & Ethernet UDP anyway.");
+      digitalWrite(Power_on_LED, 1);
+      digitalWrite(Ethernet_Active_LED, 0);
     }
     else {
       Serial.println("Ethernet connected, sending data via USB & Ethernet UDP");
+      if (Ethernet.linkStatus() == LinkON) {
+        digitalWrite(Power_on_LED, 0);
+        digitalWrite(Ethernet_Active_LED, 1);
+      }
     }       
       for (byte n = 0; n < 3; n++) {
           Eth_ipDestination[n] = Eth_myip[n];
