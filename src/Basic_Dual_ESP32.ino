@@ -36,7 +36,6 @@ const bool isLastSentenceGGA = true;
 //Note - Pullup resistors will be needed on both SDA & SCL pins
 
 //Ethernet
-//byte Eth_CS_PIN = 5;  //CS PIN with SPI Ethernet hardware W 5500  
 byte Eth_myip[4] = { 192, 168, 137, 80 }; //IP address for this GPS module
 byte mac[] = {0x90, 0xA2, 0xDA, 0x10, 0xB3, 0x1B}; // original
 byte Eth_ipDest_ending = 255;        //ending of IP address to send UDP data to
@@ -253,8 +252,6 @@ void setup()
     }
 
 //Ethernet
-  //Ethernet.init(Eth_CS_PIN);
-  //delay(15000);   //Delay just to give switch or router a head start when on same power supply
 
   Serial.println("Starting Ethernet");
   Ethernet.begin(mac, Eth_myip);
@@ -288,7 +285,7 @@ void setup()
       Serial.println();
       Serial.print("Ethernet IP of roof module: "); Serial.println(Ethernet.localIP());
       Serial.print("Ethernet sending to IP: "); Serial.println(Eth_ipDestination);
-      //init UPD Port sending to AOG
+      //init UDP Port sending to AOG
       if (Eth_udpPAOGI.begin(portMy)) // portMy  portDestination
       {
         Serial.print("Ethernet UDP sending from port: ");
@@ -296,14 +293,13 @@ void setup()
         Serial.print("Ethernet UDP sending to port: ");
         Serial.println(portDestination);
       }
-      //init UPD Port getting NTRIP from AOG
+      //init UDP Port getting NTRIP from AOG
       if (Eth_udpNtrip.begin(AOGNtripPort)) // AOGNtripPort
       {
         Serial.print("Ethernet NTRIP UDP listening to port: ");
         Serial.println(AOGNtripPort);
       }
 
-//    Serial.println();
   }
   
     Serial.println();
