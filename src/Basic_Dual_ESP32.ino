@@ -266,15 +266,15 @@ void setup()
     Serial.println("Ethernet hardware found, checking for connection");
     if (Ethernet.linkStatus() == LinkOFF) {
       Serial.println("Ethernet cable is not connected yet, sending data via USB & Ethernet UDP anyway.");
-      digitalWrite(Power_on_LED, 1);
+      //digitalWrite(Power_on_LED, 1);
       digitalWrite(Ethernet_Active_LED, 0);
     }
     else {
       Serial.println("Ethernet connected, sending data via USB & Ethernet UDP");
       if (Ethernet.linkStatus() == LinkON) {
-        digitalWrite(Power_on_LED, 0);
+        //digitalWrite(Power_on_LED, 0);
         digitalWrite(Ethernet_Active_LED, 1);
-      }
+       }
     }       
       for (byte n = 0; n < 3; n++) {
           Eth_ipDestination[n] = Eth_myip[n];
