@@ -157,6 +157,7 @@ void setup()
     pinMode(13, OUTPUT);
     pinMode(deBugPin, INPUT_PULLUP);
     deBug = !digitalRead(deBugPin);
+    deBug = true;
     Serial.println();
     
     //test if CMPS working
@@ -313,6 +314,7 @@ void setup()
 
 void loop()
 {
+    //Serial.println("TOP OF LOOP");
     //Read incoming nmea from GPS
     if (SerialGPS->available())
         parser << SerialGPS->read();
