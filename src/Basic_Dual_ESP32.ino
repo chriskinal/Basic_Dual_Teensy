@@ -31,6 +31,7 @@ uint8_t GPS2txbuffer[serial_buffer_size];   //Extra serial tx buffer
 
 //is the GGA the second sentence?
 const bool isLastSentenceGGA = true;
+bool blink = false;
 
 //I2C pins, SDA = 18, SCL = 19
 //Note - Pullup resistors will be needed on both SDA & SCL pins
@@ -103,7 +104,7 @@ int i = 0;
  /* A parser is declared with 3 handlers at most */
 NMEAParser<2> parser;
 
-bool isTriggered = false, blink;
+bool isTriggered = false;
 
 //100hz summing of gyro
 float gyro, gyroSum;
@@ -129,8 +130,9 @@ void relPosDecode();
 #define Ethernet_Active_LED 6     //Green
 #define GPSRED_LED 9              //Red (Flashing = NO IMU or Dual, ON = GPS fix with IMU)
 #define GPSGREEN_LED 10           //Green (Flashing = Dual bad, ON = Dual good)
-#define AUTOSTEER_STANDBY_LED 11  //Red
+#define AUTOSTEER_STANDBY_LED 255  //Red
 #define AUTOSTEER_ACTIVE_LED 12   //Green
+#define GGAReceivedLED 11         // LED to show GGA has been received
 
 void setup()
 {   
@@ -140,6 +142,7 @@ void setup()
     pinMode(GPSGREEN_LED, OUTPUT);
     pinMode(AUTOSTEER_STANDBY_LED, OUTPUT);
     pinMode(AUTOSTEER_ACTIVE_LED, OUTPUT);
+    pinMode(GGAReceivedLED, OUTPUT);
     digitalWrite(Power_on_LED, 1);
 
     SerialAOG.begin(baudAOG);
@@ -154,7 +157,7 @@ void setup()
 
     Wire.begin();
     delay(500);
-    pinMode(13, OUTPUT);
+    //pinMode(13, OUTPUT);
     pinMode(deBugPin, INPUT_PULLUP);
     deBug = !digitalRead(deBugPin);
     deBug = true;

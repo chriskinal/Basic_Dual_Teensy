@@ -64,8 +64,14 @@ void GGA_Handler() //Rec'd GGA
     if (parser.getArg(12, ageDGPS));
 
     if (blink)
-        digitalWrite(13, HIGH);
-    else digitalWrite(13, LOW);
+    {
+        digitalWrite(GGAReceivedLED, HIGH);
+    }
+    else
+    {
+        digitalWrite(GGAReceivedLED, LOW);
+    }
+
     blink = !blink;
 
    if(deBug) Serial.println("GGA Ready");
