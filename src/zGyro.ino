@@ -20,7 +20,6 @@ void GyroHandler(uint32_t delta)
       
       else if (useBNO08x)
         {
-          Serial.println("Top of Gyro Handler");
         if (bno08x.dataAvailable() == true)
           {
             gyro = (bno08x.getGyroZ()) * RAD_TO_DEG; // Get raw yaw rate
