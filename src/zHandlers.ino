@@ -152,7 +152,6 @@ void imuHandler()
     else if (useBNO08x)
     {
         //Heading
-        Serial.println("Top of BNO08x");
         temp = bno08xHeading10x;
         itoa(temp, imuHeading, 10);
 
@@ -260,7 +259,7 @@ void BuildPANDA(void)
         Eth_udpPAOGI.endPacket();
       }
 
-        //SerialAOG.print(nme);
+        SerialAOG.print(nme);
 
 }
 
